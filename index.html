@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebCam</title>
+</head>
+<body>
+
+    <video id="received" autoplay></video>
+    <video id="received2" autoplay></video>
+    <video id="local" autoplay muted></video>
+    <video id="local2" autoplay muted></video>
+    <button id="button">Button</button>
+
+
+
+    <script type="module">
+        import {WebRTC} from "./WebRTC.js";
+
+        let webRTC = WebRTC.create('local', 'button', 'received');
+        // webCam.showAllCams();
+        //webCam.showCamWithPersonalParams();
+        //webCam.addListenerToButton();
+        webRTC.connect();
+
+
+    </script>
+</body>
+</html>
