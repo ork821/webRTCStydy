@@ -72,7 +72,11 @@ export class WebRTC {
         });
 
 
-
+        //this.pc1.getStats().then((statsReport) => console.log(statsReport));
+        //
+        //
+        //for(let v of temp3.entries()) console.log(v);
+        //"RTCRemoteInboundRtpVideoStream_797749127"
     }
 
     static create(localVideo: string, buttonId: string, recVideo: string): WebRTC {

@@ -49,6 +49,11 @@ export class WebRTC {
             this.videoIsOn = !this.videoIsOn;
             this.showVideo();
         });
+        //this.pc1.getStats().then((statsReport) => console.log(statsReport));
+        //
+        //
+        //for(let v of temp3.entries()) console.log(v);
+        //"RTCRemoteInboundRtpVideoStream_797749127"
     }
     static create(localVideo, buttonId, recVideo) {
         let local = document.getElementById(localVideo);
