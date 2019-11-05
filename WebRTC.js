@@ -53,12 +53,32 @@ export class WebRTC {
         this.buttonElem.addEventListener('click', () => {
             this.videoIsOn = !this.videoIsOn;
             this.showVideo();
+            let bytesReceived = 0;
+            const get_stats = () => {
+                this.pc1.getStats().then((statsReport) => {
+                    for (let stat of statsReport) {
+                        if (stat[0].indexOf("RTCInbound") !== -1) {
+                            if (stat[1].bytesReceived !== bytesReceived) {
+                                this.recievedVideo.style.display = 'block';
+                                let received2 = document.getElementById('received2');
+                                if (received2 !== null) {
+                                    received2.style.display = 'block';
+                                }
+                                bytesReceived = stat[1].bytesReceived;
+                            }
+                            else {
+                                this.recievedVideo.style.display = 'none';
+                                let received2 = document.getElementById('received2');
+                                if (received2 !== null) {
+                                    received2.style.display = 'none';
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+            setInterval(get_stats, 1000);
         });
-        //this.pc1.getStats().then((statsReport) => console.log(statsReport));
-        //
-        //
-        //for(let v of temp3.entries()) console.log(v);
-        //"RTCRemoteInboundRtpVideoStream_797749127"
     }
     static create(localVideo, buttonId, recVideo) {
         let local = document.getElementById(localVideo);
@@ -106,7 +126,7 @@ export class WebRTC {
                 videoDevices.push(device);
             }
         }
-        console.log(videoDevices);
+        //console.log(videoDevices);
         let stream1 = await navigator.mediaDevices.getUserMedia({
             video: {
                 height: 300,
