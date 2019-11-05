@@ -19,7 +19,13 @@ export class WebRTC {
 
 
     public addListeners() {
-        console.log(navigator.mediaDevices.enumerateDevices())
+        // navigator.mediaDevices.enumerateDevices().then(devices => {
+        //     for (let device of devices) {
+        //         if (device.kind === "videoinput") {
+        //             this.webCams.push(device);
+        //         }
+        //     }
+        // });
         this.pc1.onicecandidate = ev => {
             if (ev.candidate !== null)
                 this.pc2.addIceCandidate(ev.candidate);
@@ -45,7 +51,6 @@ export class WebRTC {
         };
 
         this.pc1.ontrack = ev => {
-            console.log(1);
             let stream = new MediaStream();
             stream.addTrack(ev.track);
 
@@ -67,7 +72,7 @@ export class WebRTC {
 
         this.buttonElem.addEventListener('click', () => {
             this.videoIsOn = !this.videoIsOn;
-            this.showVideo()
+            this.showVideo();
 
         });
 
@@ -101,70 +106,101 @@ export class WebRTC {
         let answerSdp = await this.pc2.createAnswer();
         await this.pc2.setLocalDescription(answerSdp);
         await this.pc1.setRemoteDescription(answerSdp);
+
+        let offerSdp2 = await this.pc2.createOffer();
+        await this.pc2.setLocalDescription(offerSdp2);
+        await this.pc1.setRemoteDescription(offerSdp2);
+
+        let answerSdp2 = await this.pc1.createAnswer();
+        await this.pc1.setLocalDescription(answerSdp2);
+        await this.pc2.setRemoteDescription(answerSdp2);
     }
 
 
     private async connect() {
 
-        const stats = () => {
-            if (this.pc2.getReceivers()[0].track.getSettings().frameRate === 0) {
-                this.recievedVideo.style.display = 'none';
-            } else {
-                this.recievedVideo.style.display = 'block';
-            }
-            //console.log(this.pc2.getReceivers()[0].transport.getRemoteCertificates())
-        };
 
-        setInterval(stats, 2000);
+        // const stats = () => {
+        //     if (this.pc2.getReceivers()[0].track.getSettings().frameRate === 0) {
+        //         this.recievedVideo.style.display = 'none';
+        //     } else {
+        //         this.recievedVideo.style.display = 'block';
+        //     }
+        //     //console.log(this.pc2.getReceivers()[0].transport.getRemoteCertificates())
+        // };
+
+        //setInterval(stats, 2000);
 
         this.addListeners();
 
         this.pc1.addTransceiver("video");
-        //this.pc2.addTransceiver("video");
+        this.pc2.addTransceiver("video");
+
         this.createOfferAndAnswer();
     }
 
     public async showVideo() {
-        let stream = await navigator.mediaDevices.getUserMedia({
-            video: true
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = [];
+        for (let device of devices) {
+            if (device.kind === "videoinput") {
+                videoDevices.push(device);
+            }
+        }
+        console.log(videoDevices);
+        let stream1 = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    height: 300,
+                    width: 640,
+                    deviceId: videoDevices[0].deviceId
+                }
+            });
+
+        let stream2 = await navigator.mediaDevices.getUserMedia({
+            video: {
+                height: 300,
+                width: 640,
+                deviceId: {exact: videoDevices[1].deviceId},
+            }
         });
 
-        this.localVideo.srcObject = stream;
+        this.localVideo.srcObject = stream1;
 
-        // let local2 = <HTMLMediaElement>document.getElementById('local2');
-        // if (local2 !== null) {
-        //     local2.srcObject = stream;
-        // }
+        let local2 = <HTMLMediaElement>document.getElementById('local2');
+        if (local2 !== null) {
+            local2.srcObject = stream2;
+        }
 
-        let tracks = stream.getTracks();
-        top:
-            for (let track of tracks) {
+        let tracks1 = stream1.getTracks();
+        top1:
+            for (let track of tracks1) {
                 //console.log(track.getCapabilities());
                 let senders = this.pc1.getSenders();
                 for (let snd of senders) {
 
                     if (snd.track === null && this.videoIsOn) {
                         await snd.replaceTrack(track);
-                        continue top;
+                        continue top1;
                     } else if (snd.track !== null && !this.videoIsOn) {
                         await snd.replaceTrack(null);
                     }
                 }
-
-                // let senders2 = this.pc2.getSenders();
-                // for (let snd of senders2) {
-                //
-                //     if (snd.track === null && this.videoIsOn) {
-                //         await snd.replaceTrack(track);
-                //         continue top;
-                //     } else if (snd.track !== null && !this.videoIsOn) {
-                //         await snd.replaceTrack(null);
-                //     }
-                // }
-
+            }
+        let tracks2 = stream2.getTracks();
+        top2:
+            for (let track of tracks2) {
+                //console.log(track.getCapabilities());
+                let senders = this.pc2.getSenders();
+                for (let snd of senders) {
+                    if (snd.track === null && this.videoIsOn) {
+                        await snd.replaceTrack(track);
+                        continue top2;
+                    } else if (snd.track !== null && !this.videoIsOn) {
+                        await snd.replaceTrack(null);
+                    }
+                }
             }
     }
-
 }
 
 
