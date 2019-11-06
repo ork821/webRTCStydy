@@ -1,0 +1,22 @@
+{
+  "name": "webcam",
+  "version": "1.0.0",
+  "description": "",
+  "main": "TurnServer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ork821/webRTCStydy.git"
+  },
+  "dependencies": {
+    "tc-sdp": "git+ssh://git@gitlab.trueconf.com:libs/ts/sdp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ork821/webRTCStydy/issues"
+  },
+  "homepage": "https://github.com/ork821/webRTCStydy#readme"
+}

@@ -3,25 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>WebCam</title>
+
+
+    <script type="importmap">
+    {
+      "imports": {
+        "tc-ice/dist/": "/node_modules/tc-ice/dist/",
+        "tc-sdp/dist/" : "/node_modules/tc-sdp/dist/"
+      }
+    }
+    </script>
+
 </head>
 <body>
 
     <video id="received" autoplay></video>
-    <video id="received2" autoplay></video>
+<!--    <video id="received2" autoplay></video>-->
     <video id="local" autoplay muted></video>
-    <video id="local2" autoplay muted></video>
+<!--    <video id="local2" autoplay muted></video>-->
     <button id="button">Button</button>
 
 
 
     <script type="module">
-        import {WebRTC} from "./WebRTC.js";
+        import {TurnServer} from "./TurnServer.js";
 
-        let webRTC = WebRTC.create('local', 'button', 'received');
+        let turnServer = TurnServer.create('local', 'button', 'received');
         // webCam.showAllCams();
         //webCam.showCamWithPersonalParams();
         //webCam.addListenerToButton();
-        webRTC.connect();
+        turnServer.connect();
 
 
     </script>
